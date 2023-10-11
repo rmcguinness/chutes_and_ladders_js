@@ -1,3 +1,4 @@
+const MINIUM_SIDES = 4
 
 export class Color {
     static RED = 1;
@@ -12,6 +13,8 @@ export class Color {
     static BROWN = 10;
 }
 
+Object.freeze(Color)
+
 export class SpaceType {
     static START = 1;
     static NORMAL = 2;
@@ -20,7 +23,9 @@ export class SpaceType {
     static FINISH = 5;
 }
 
-const MINIUM_SIDES = 4
+Object.freeze(SpaceType)
+
+
 
 export class Die {
     
@@ -156,7 +161,7 @@ export class LinkedSpace {
     validate(list) {
         list.forEach(f => 
             { 
-                const ans = f();
+                const ans = f(this);
                 if (!ans) {
                     return false
                 }
