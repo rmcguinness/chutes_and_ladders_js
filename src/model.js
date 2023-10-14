@@ -1,19 +1,17 @@
 const MINIUM_SIDES = 4
 
-export class Color {
-    static RED = 1;
-    static WHITE = 2;
-    static BLUE = 3;
-    static GREEN = 4;
-    static PURPLE = 5;
-    static YELLOW = 6;
-    static ORANGE = 7;
-    static PINK = 8;
-    static BLACK = 9;
-    static BROWN = 10;
+export const Color = {
+    RED: 1,
+    WHITE: 2,
+    BLUE: 3,
+    GREEN: 4,
+    PURPLE: 5,
+    YELLOW: 6,
+    ORANGE: 7,
+    PINK: 8,
+    BLACK: 9,
+    BROWN: 10
 }
-
-Object.freeze(Color)
 
 export class SpaceType {
     static START = 1;
@@ -66,6 +64,7 @@ export class DieShaker {
 export class Avatar {
     #Name
     #Location
+    #Color
     constructor(name, location) {
         this.#Name = name
         this.#Location = location
@@ -73,17 +72,37 @@ export class Avatar {
     get name() { return this.#Name }
     get location() { return this.#Location }
     set location(location) { this.#Location = location }
+    get color() { return this.#Color }
+    set color(color) { this.#Color = color }
+    
+    _moveForward(count) {
+        let loc = this.location
+        for(let i=0;i<count;i++) {
+            if (loc.next) {
+                loc = loc.next
+            } else {
+                return undefined
+            }
+        }
+        return loc
+    }
+
+    _moveBackward(count) {
+        let loc = this.location
+        for (let i=0;i<count;i++) {
+            if (loc.previous) {
+                loc = loc.previous
+            } else {
+                return undefined
+            }
+        }
+        return loc
+    }
+
     move(count) {
         const origin = this.location
         if (this.location != undefined) {
-            let loc = this.location
-            for(let i=0;i<count;i++) {
-                if (loc.next) {
-                    loc = loc.next
-                } else {
-                    break
-                }
-            }
+            const loc = (count>0) ? this._moveForward(count) : this._moveBackward(Math.abs(count))
             if (loc != undefined) {
                 origin.leave()
                 loc.land(this)
@@ -110,6 +129,7 @@ export class Player {
 export class LinkedSpace {
     #Value
     #Type
+    #Previous
     #Next
     #Special
     #Avatars
@@ -122,6 +142,8 @@ export class LinkedSpace {
     get type() { return this.#Type }
     get next() { return this.#Next }
     set next(space) { this.#Next = space }
+    get previous() { return this.#Previous }
+    set previous(space) { this.#Previous = space }
     /**
      * @param {LinkedSpace} space
      */
